@@ -532,7 +532,7 @@
     self.toolbar.alpha = 1.000;
     self.toolbar.autoresizesSubviews = YES;
     self.toolbar.autoresizingMask = toolbarIsAtBottom ? (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin) : UIViewAutoresizingFlexibleWidth;
-    self.toolbar.barStyle = UIBarStyleBlackOpaque;
+    // self.toolbar.barStyle = UIBarStyleBlackOpaque;
     self.toolbar.clearsContextBeforeDrawing = NO;
     self.toolbar.clipsToBounds = NO;
     self.toolbar.contentMode = UIViewContentModeScaleToFill;
@@ -540,6 +540,7 @@
     self.toolbar.multipleTouchEnabled = NO;
     self.toolbar.opaque = NO;
     self.toolbar.userInteractionEnabled = YES;
+    self.toolbar.backgroundColor = [UIColor colorWithRed:237.0 / 255.0 green:237.0 / 255.0 blue:237.0 / 255.0 alpha:1];
 
     CGFloat labelInset = 5.0;
     float locationBarY = toolbarIsAtBottom ? self.view.bounds.size.height - FOOTER_HEIGHT : self.view.bounds.size.height - LOCATIONBAR_HEIGHT;
@@ -572,18 +573,33 @@
     self.addressLabel.textAlignment = NSTextAlignmentLeft;
     self.addressLabel.textColor = [UIColor colorWithWhite:1.000 alpha:1.000];
     self.addressLabel.userInteractionEnabled = NO;
+    
+    UIButton* forwardButtonView = [UIButton buttonWithType:UIButtonTypeCustom];
+    NSString* frontArrowString = NSLocalizedString(@">", nil); // create arrow from Unicode char
+    forwardButtonView.frame = CGRectMake(0,0,30,TOOLBAR_HEIGHT);
+    [forwardButtonView setTitle:frontArrowString forState:UIControlStateNormal];
+    [forwardButtonView addTarget:self action:@selector(goForward:) forControlEvents:UIControlEventTouchUpInside];
+    //[forwardButtonView setBackgroundColor:[UIColor redColor]];
+    [forwardButtonView setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
+    [forwardButtonView setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
 
-    NSString* frontArrowString = NSLocalizedString(@"►", nil); // create arrow from Unicode char
-    self.forwardButton = [[UIBarButtonItem alloc] initWithTitle:frontArrowString style:UIBarButtonItemStylePlain target:self action:@selector(goForward:)];
+    self.forwardButton = [[UIBarButtonItem alloc] initWithCustomView:forwardButtonView];
     self.forwardButton.enabled = YES;
-    self.forwardButton.imageInsets = UIEdgeInsetsZero;
 
-    NSString* backArrowString = NSLocalizedString(@"◄", nil); // create arrow from Unicode char
-    self.backButton = [[UIBarButtonItem alloc] initWithTitle:backArrowString style:UIBarButtonItemStylePlain target:self action:@selector(goBack:)];
+    
+    UIButton* backButtonView = [UIButton buttonWithType:UIButtonTypeCustom];
+    NSString* backArrowString = NSLocalizedString(@"<", nil); // create arrow from Unicode char
+    backButtonView.frame = CGRectMake(0,0,30,TOOLBAR_HEIGHT);
+    [backButtonView setTitle:backArrowString forState:UIControlStateNormal];
+    [backButtonView addTarget:self action:@selector(goBack:) forControlEvents:UIControlEventTouchUpInside];
+    //[backButtonView setBackgroundColor:[UIColor redColor]];
+    [backButtonView setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
+    [backButtonView setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    
+    self.backButton = [[UIBarButtonItem alloc] initWithCustomView:backButtonView];
     self.backButton.enabled = YES;
-    self.backButton.imageInsets = UIEdgeInsetsZero;
 
-    [self.toolbar setItems:@[flexibleSpaceButton, self.backButton, fixedSpaceButton, self.forwardButton]];
+    [self.toolbar setItems:@[self.backButton, self.forwardButton, flexibleSpaceButton]];
 
     self.view.backgroundColor = [UIColor grayColor];
     [self.view addSubview:self.toolbar];
@@ -932,6 +948,16 @@
     }
 
     return self;
+}
+
++ (UIButton*)toolbarButton:(NSString*)options {
+    UIButton* btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    NSString* frontArrowString = NSLocalizedString(@">", nil); // create arrow from Unicode char
+    btn.frame = CGRectMake(0,0,30,TOOLBAR_HEIGHT);
+    [btn setTitle:frontArrowString forState:UIControlStateNormal];
+    [btn addTarget:self action:@selector(goForward:) forControlEvents:UIControlEventTouchUpInside];
+    [btn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
+    [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
 }
 
 + (CDVInAppBrowserOptions*)parseOptions:(NSString*)options
